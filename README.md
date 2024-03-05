@@ -24,3 +24,4 @@ average: Calculates the average value of all integers in the stack.
 Usage
 To use this program, include the header.h header file in your C++ code. You can then create instances of the Single Linked List and Stack classes and perform various operations on them.
 
+![alt text](https://cdn.discordapp.com/attachments/301551703247814656/1214391361227198515/image.png?ex=65f8f116&is=65e67c16&hm=ca01eda1fe5722b808800d2bee3381b323a8a4d75f789c81827ffd76b566afc9&)
