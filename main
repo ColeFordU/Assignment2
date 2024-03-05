@@ -1,0 +1,207 @@
+#include <iostream>
+#include <vector>
+#include <stdexcept>
+
+// Single_Linked_List class
+template <typename T>
+class Single_Linked_List {
+private:
+    struct Node {
+        T data;
+        Node* next;
+        Node(const T& item) : data(item), next(nullptr) {}
+    };
+    Node* head;
+    Node* tail;
+    size_t num_items;
+
+public:
+    Single_Linked_List() : head(nullptr), tail(nullptr), num_items(0) {}
+
+    ~Single_Linked_List() {
+        Node* current = head;
+        while (current) {
+            Node* next = current->next;
+            delete current;
+            current = next;
+        }
+    }
+
+    void push_front(const T& item) {
+        Node* new_node = new Node(item);
+        if (empty()) {
+            head = tail = new_node;
+        } else {
+            new_node->next = head;
+            head = new_node;
+        }
+        ++num_items;
+    }
+
+    void push_back(const T& item) {
+        Node* new_node = new Node(item);
+        if (empty()) {
+            head = tail = new_node;
+        } else {
+            tail->next = new_node;
+            tail = new_node;
+        }
+        ++num_items;
+    }
+
+    void pop_front() {
+        if (empty()) return;
+        Node* temp = head;
+        head = head->next;
+        delete temp;
+        --num_items;
+        if (num_items == 0) tail = nullptr;
+    }
+
+    void pop_back() {
+        if (empty()) return;
+        if (num_items == 1) {
+            delete tail;
+            head = tail = nullptr;
+            num_items = 0;
+            return;
+        }
+        Node* current = head;
+        while (current->next != tail) {
+            current = current->next;
+        }
+        delete tail;
+        tail = current;
+        tail->next = nullptr;
+        --num_items;
+    }
+
+    T front() const {
+        if (empty()) throw std::out_of_range("List is empty");
+        return head->data;
+    }
+
+    T back() const {
+        if (empty()) throw std::out_of_range("List is empty");
+        return tail->data;
+    }
+
+    bool empty() const {
+        return num_items == 0;
+    }
+
+    void insert(size_t index, const T& item) {
+        if (index >= num_items) {
+            push_back(item);
+            return;
+        }
+        if (index == 0) {
+            push_front(item);
+            return;
+        }
+        Node* current = head;
+        for (size_t i = 0; i < index - 1; ++i) {
+            current = current->next;
+        }
+        Node* new_node = new Node(item);
+        new_node->next = current->next;
+        current->next = new_node;
+        ++num_items;
+    }
+
+    bool remove(size_t index) {
+        if (index >= num_items) return false;
+        if (index == 0) {
+            pop_front();
+            return true;
+        }
+        Node* current = head;
+        for (size_t i = 0; i < index - 1; ++i) {
+            current = current->next;
+        }
+        Node* temp = current->next;
+        current->next = temp->next;
+        delete temp;
+        --num_items;
+        if (index == num_items) tail = current;
+        return true;
+    }
+
+    size_t find(const T& item) const {
+        Node* current = head;
+        size_t index = 0;
+        while (current) {
+            if (current->data == item) return index;
+            current = current->next;
+            ++index;
+        }
+        return num_items;
+    }
+};
+
+// Stack class using vector
+class Stack {
+private:
+    std::vector<int> elements;
+
+public:
+    bool empty() const {
+        return elements.empty();
+    }
+
+    void push(int value) {
+        elements.push_back(value);
+    }
+
+    void pop() {
+        if (empty()) {
+            std::cerr << "Stack is empty. Cannot pop.\n";
+            return;
+        }
+        elements.pop_back();
+    }
+
+    int top() const {
+        if (empty()) {
+            throw std::out_of_range("Stack is empty");
+        }
+        return elements.back();
+    }
+
+    double average() const {
+        if (empty()) {
+            throw std::logic_error("Cannot calculate average of an empty stack");
+        }
+        double sum = 0.0;
+        for (int element : elements) {
+            sum += element;
+        }
+        return sum / elements.size();
+    }
+};
+
+int main() {
+    // Q1
+    Single_Linked_List<int> list;
+    list.push_front(3);
+    list.push_front(2);
+    list.push_front(1);
+    list.push_back(4);
+    std::cout << "Front: " << list.front() << ", Back: " << list.back() << std::endl;
+    list.pop_front();
+    list.pop_back();
+    std::cout << "Front after pop_front: " << list.front() << ", Back after pop_back: " << list.back() << std::endl;
+
+    // Q2
+    Stack stack;
+    std::cout << "Is stack empty? " << (stack.empty() ? "Yes" : "No") << std::endl;
+    stack.push(5);
+    stack.push(10);
+    stack.push(15);
+    std::cout << "Top of stack: " << stack.top() << std::endl;
+    stack.pop();
+    std::cout << "New top of stack: " << stack.top() << std::endl;
+    std::cout << "Average of stack elements: " << stack.average() << std::endl;
+
+    return 0;
+}
